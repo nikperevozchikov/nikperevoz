@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Это канбан</title>
+    <link rel="stylesheet" href="index.css"/>
+</head>
+<body>
+<div id="app">
+    <fullscreen :fullscreen.sync="toggles.isFullscreen" ref="fullscreen">
+        <div class="container-fluid bg-white pl-0 pr-0">
+            <div class="navbar navbar-expand navbar-dark bg-dark">
+                <ul class="navbar-nav ml-auto mr-3">
+                    <li class="nav-item">
+                        <a href="#" @click="startToggle" id="startButton" v-html="startButton"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" @click="reset" id="resetButton" v-html="resetButton"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" @click="toggles.isFullscreen = !toggles.isFullscreen" id="fullscreenButton" v-html="fullscreenButton"></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="row">
+                <div class="col pl-0 pr-0">
+                    <table class="b-table mt-2 mb-2 ml-auto mr-auto">
+                        <tr class="b-header-row">
+                            <td class="b-column" :colspan="stageData.isInnerDone ? 2 : 1" :rowspan="stageData.isInnerDone ? 1 : 2" v-for="(stageData, stageName) in stages">
+                                <div class="row mb-4">
+                                    <div class="col text-center font-weight-bold" v-html="stageName"></div>
+                                </div>
+                                <template v-for="(description, config) in stageConfigs" v-if="stageData[config]">
+                                    <div class="row">
+                                        <div class="col text-right">
+                                            <label :for="stageName + config">{{description}}:&nbsp;</label>
+                                            <input class="input-control w-25" :id="stageName + config" :name="stageName + config" type="text" v-model="stageData[config]"/>
+                                        </div>
+                                    </div>
+                                    <div class="row" v-if="config ==='diceCount'">
+                                        <div class="col text-right">
+                                            <!--<p>Average utilization, %: {{stageData.averageUtilization}}</p>-->
+                                        </div>
+                                    </div>
+                                </template>
+
+                            </td>
+                        </tr>
+                        <tr class="b-header2-row">
+                            <template v-for="(stageData, stageName) in stages">
+                                <td :class="'b-column b-' + stageName + ' b-wip text-center align-middle'" v-if="stageData.isInnerDone">WIP</td>
+                                <td :class="'b-column b-' + stageName + ' b-inner-done text-center align-middle'" v-if="stageData.isInnerDone">Done</td>
+                            </template>
+                        </tr>
+                        <tr class="b-expedite-row">
+                            <template v-for="(stageData, stageName) in stages">
+                                <td class="b-column" v-if="stageData.isInnerDone">&nbsp;</td>
+                                <td :class="'b-column b-'+ stageName">&nbsp;</td>
+                            </template>
+                        </tr>
+                        <tr class="b-regular-row">
+                            <template v-for="(stageData, stageName) in stages">
+                                <td class="b-column" v-if="stageData.isInnerDone">
+                                    <b-cards :cards="stageData.cards.wip.slice(-10)"></b-cards>
+                                </td>
+                                <td :class="'b-column b-'+ stageName">
+                                    <b-cards :cards="stageData.isInnerDone ? stageData.cards.done.slice(-10) : stageData.cards.wip.slice(-10)"></b-cards>
+                                </td>
+                            </template>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!--<div class="row pl-3">-->
+                <!--<div class="col-4" v-for="(diagramData, diagramName) in info" v-if="diagramName!=='util'">-->
+                    <!--<h6 @click="diagramData.visible = !diagramData.visible" style=" cursor: pointer;">-->
+                        <!--{{diagramData.name}}-->
+                        <!--<span :id="diagramName + 'Info'" :class="diagramData.styleClass">[{{diagramData.description}}: {{diagramData.value}} {{diagramData.sign}}]</span>-->
+                    <!--</h6>-->
+                    <!--<div v-show="diagramData.visible">-->
+                        <!--<canvas :id="diagramName"></canvas>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="navbar navbar-expand navbar-dark bg-dark">
+                <ul class="navbar-nav ml-auto mr-3">
+                    <li class="nav-item">
+                        <h6 class="text-light" @click="about" style="cursor: pointer;">Это все невозможно, жизнь тлен, Никита живи &copy; 2019</h6>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </fullscreen>
+</div>
+<script src="index.js" type="application/javascript"></script>
+</body>
+</html>
